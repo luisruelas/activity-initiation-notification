@@ -1,6 +1,7 @@
+# Vivanta Python Lambda Template
 ## Warning: Python 3.8 is used in lambdas
 
-## Use
+## Setup
 Run the following at root to install all the required dependencies:
 ```pipenv install```
 
