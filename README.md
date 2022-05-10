@@ -21,9 +21,13 @@ You can run it at the root of the project with:
 ```pipenv run pylint .```
 
 ## Building project for lamdas
-Use this one-liner in the root of the proyect, this will create a _build with all your code:
+Use this one-liner in the root of the proyect, this will create a _build with all the dependencies:
 
 ```pipenv run pip install -r <(pipenv lock -r) --target _build/```
+
+Don't forget to add your code in (ideally, this folder name is the same as your AWS Lambda's):
+
+```mkdir -p _build/lambda_name && cp lambda_function.py _build/lambda_name```
 
 
 If you compress that file into a zip, it is possible to upload it to lambdas:
