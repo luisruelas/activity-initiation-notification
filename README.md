@@ -10,6 +10,12 @@ Remember we should install any further dependencies with pipenv:
 
 ```pipenv install <dependency_name>```
 
+Also, you should add the pre-commit script to your local repo:
+
+``` cp pre-commit-sample .git/hooks/pre-commit```
+
+This will run unit testing and linting before each commit, ensuring all of your commits comply with our coding standards
+
 ## Testing
 To run tests with Python unittests, go to the root of the project and run:
 
