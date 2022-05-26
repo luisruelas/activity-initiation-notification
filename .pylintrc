@@ -4,6 +4,7 @@ ignore-patterns=Pipfile
 disable=C0114, #module docstring
         C0115, #class docstring
         C0116, #function docstring
+        E0401, # importation errors
 
 [FORMAT]
 

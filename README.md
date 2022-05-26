@@ -2,13 +2,19 @@
 ## Warning: Python 3.8 is used in lambdas
 
 ## Setup
-Run the following at root to install all the required dependencies:
+  - Install npm dependencies via Pipenv:
 
-```pipenv install```
+  ```pipenv install```
 
-Remember we should install any further dependencies with pipenv:
+  Remember we should install any further dependencies with pipenv:
 
-```pipenv install <dependency_name>```
+  ```pipenv install <dependency_name>```
+
+  - Setup pre-commit hooks:
+
+  ```cp pre-commit-sample .git/hooks/pre-commit && chmod ug+x .git/hooks/*```
+
+  Remember to commit inside a `pipenv shell`, otherwise linting and python3 may throw dependency error, if you don't have them in your host system.
 
 Also, you should add the pre-commit script to your local repo:
 
@@ -17,14 +23,14 @@ Also, you should add the pre-commit script to your local repo:
 This will run unit testing and linting before each commit, ensuring all of your commits comply with our coding standards
 
 ## Testing
-To run tests with Python unittests, go to the root of the project and run:
+To run tests with Python unittests, do it in a `pipenv shell`:
 
 ```python3 -m unittest tests/*.py```
 
 ## Linting
-You can run it at the root of the project with:
+Don't forget to do this inside a `pipenv shell`. You can run it at the root of the project with:
 
-```pipenv run pylint .```
+```pylint code/*.py```
 
 ## Building project for lamdas
 Use this one-liner in the root of the proyect, this will create a _build with all the dependencies:

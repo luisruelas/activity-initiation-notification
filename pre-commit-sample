@@ -29,7 +29,7 @@ else
 	exit 1
 fi
 #Run linting
-if pylint ./*.py; then
+if pylint ./code/*.py; then
 	echo 'Linting passed'
 else
 	echo 'Linting failed'
@@ -48,6 +48,11 @@ if [ "$allownonascii" != "true" ] &&
 then
 	cat <<\EOF
 Error: Attempt to add a non-ASCII file name.
+<<<<<<< HEAD
+This can cause problems if you want to work with people on other platforms.
+To be portable it is advisable to rename the file.
+If you know what you are doing you can disable this check using:
+=======
 
 This can cause problems if you want to work with people on other platforms.
 
@@ -55,10 +60,15 @@ To be portable it is advisable to rename the file.
 
 If you know what you are doing you can disable this check using:
 
+>>>>>>> 721771e374b10135f3e93ecab384e13fb2d86d4c
   git config hooks.allownonascii true
 EOF
 	exit 1
 fi
 
 # If there are whitespace errors, print the offending file names and fail.
+<<<<<<< HEAD
 exec git diff-index --check --cached $against --
+=======
+exec git diff-index --check --cached $against --
+>>>>>>> 721771e374b10135f3e93ecab384e13fb2d86d4c
