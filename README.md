@@ -18,9 +18,13 @@
 
 Also, you should add the pre-commit script to your local repo:
 
-``` cp pre-commit-sample .git/hooks/pre-commit```
+  ``` cp pre-commit-sample .git/hooks/pre-commit```
 
 This will run unit testing and linting before each commit, ensuring all of your commits comply with our coding standards
+
+Also please add your current path to .env so pipenv will load modules correctly:
+
+  ```pwd > .env```
 
 ## Testing
 To run tests with Python unittests, do it in a `pipenv shell`:
