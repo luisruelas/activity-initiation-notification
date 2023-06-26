@@ -1,3 +1,19 @@
-from lambda_function import lambda_handler
+from code.lambda_function import lambda_handler
+import sys
 
-print(lambda_handler(1, 2))
+if len(sys.argv) >= 5:
+    customerId = sys.argv[1]
+    customerKey = sys.argv[2]
+    brandId = sys.argv[3]
+    ids = sys.argv[4].split(",")
+    print(f"Customer ID: {customerId}")
+    print(f"Customer Key: {customerKey}")
+else:
+    print("Customer ID and Customer Key not provided.")
+
+print(lambda_handler({
+    'customerId': customerId,
+    'customerKey': customerKey,
+    'brandId': brandId,
+    'ids': ids,
+}, 2))
