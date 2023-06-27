@@ -1,4 +1,3 @@
 {
-  "python.autoComplete.extraPaths": [],
-  "python.autoComplete.addBrackets": true
+  "python.autoComplete.extraPaths": []
 }
