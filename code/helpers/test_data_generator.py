@@ -7,7 +7,6 @@ class TestDataGenerator:
     customer: Customer = None
     ids: list = []
     brandId: int = 0
-    TEST_FOLDER = "../../output_tests"
     scriptDir = ""
     def __init__(self, brandId: int, ids: list, customer: Customer):
         self.ids = ids
@@ -39,7 +38,7 @@ class TestDataGenerator:
         return test_list
 
     def __get_parameters_json(self):
-        with open(os.path.join(self.scriptDir, "../../parameters.json"), "r") as file:
+        with open("code/parameters.json") as file:
             return json.load(file)
 
     def __get_today_date_ymd(self):

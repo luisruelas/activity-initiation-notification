@@ -1,0 +1,194 @@
+{
+	"info": {
+		"_postman_id": "91a4666b-006e-45eb-bf58-b56df2673820",
+		"name": "VivantaAPI1.1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20706753"
+	},
+	"item": [
+		{
+			"name": "Brand",
+			"item": [
+				{
+					"name": "index",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.vivanta.io/brands",
+							"protocol": "https",
+							"host": [
+								"api",
+								"vivanta",
+								"io"
+							],
+							"path": [
+								"brands"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "index",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "{{x-api-key}}",
+								"type": "text"
+							},
+							{
+								"key": "x-customer",
+								"value": "{{x-customer}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://api.vivanta.io/users",
+							"protocol": "https",
+							"host": [
+								"api",
+								"vivanta",
+								"io"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "show",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "{{x-api-key}}",
+								"type": "text"
+							},
+							{
+								"key": "x-customer",
+								"value": "{{x-customer}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://api.vivanta.io/users/{{user-id}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"vivanta",
+								"io"
+							],
+							"path": [
+								"users",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "parameters",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "{{x-api-key}}",
+								"type": "text"
+							},
+							{
+								"key": "x-customer",
+								"value": "{{x-customer}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://api.vivanta.io/users/{{user-id}}/biomarkers/steps?brand={{brand-id}}&date={{date}}&units={{units}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"vivanta",
+								"io"
+							],
+							"path": [
+								"users",
+								"{{user-id}}",
+								"biomarkers",
+								"steps"
+							],
+							"query": [
+								{
+									"key": "brand",
+									"value": "{{brand-id}}"
+								},
+								{
+									"key": "date",
+									"value": "{{date}}"
+								},
+								{
+									"key": "units",
+									"value": "{{units}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ParameterTypes",
+			"item": [
+				{
+					"name": "parameters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.vivanta.io/parameter-types/{{parameter-type}}/parameters",
+							"protocol": "https",
+							"host": [
+								"api",
+								"vivanta",
+								"io"
+							],
+							"path": [
+								"parameter-types",
+								"{{parameter-type}}",
+								"parameters"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "vivanta-api-url",
+			"value": "localhost:3000"
+		}
+	]
+}

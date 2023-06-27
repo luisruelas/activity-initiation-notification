@@ -2,5 +2,6 @@
 _build
 _build.zip
 output_tests/*
-files
 npm_dependencies/*
+deployments
+requirements.txt

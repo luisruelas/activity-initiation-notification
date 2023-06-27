@@ -11,9 +11,11 @@ if len(sys.argv) >= 5:
 else:
     print("Customer ID and Customer Key not provided.")
 
-print(lambda_handler({
+EVENT = {
     'customerId': customerId,
     'customerKey': customerKey,
     'brandId': brandId,
     'ids': ids,
-}, 2))
+}
+print('EVENT', EVENT)
+print(lambda_handler(EVENT, 2))
