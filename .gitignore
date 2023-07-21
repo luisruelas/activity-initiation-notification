@@ -8,3 +8,6 @@ requirements.txt
 .env.production
 .env.dev
 .env.aws
+code.zip
+python.zip
+deployments
