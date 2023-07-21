@@ -1,22 +1,27 @@
 #/bin/bash
 
 #Ask lambda details
-read -r -p "Select an environment (dev/production)" env
-read -r -p "Are you creating a new function? [y/N] " response
+read -r -p "Select an environment (d- for dev; p - for production)" envabv
 
-echo "Define the name of this AWS Layer"
-read layername
-
-echo "Write a description for this AWS Layer"
-read layerdescription
-
-echo "Define the name of this AWS Lambda"
+echo "Define the name of this AWS Lambda (skip \"-environment\" in the name)"
 read lambdaname
 
 echo "Define handler of this AWS Lambda (default: code.lambda_function.lambda_handler)"
 read handler
 
+if [[ "$envabv" =~ ^([dD])$ ]];
+then
+  env="dev"
+elif [[ "$envabv" =~ ^([pP])$ ]];
+then
+  env="production"
+else
+  echo "Invalid environment"
+  exit 1
+fi
+
 # Code filename
+response="N" #Never create a new lambda with this script
 datetime=$(date +"%Y-%m-%dT%H_%M_%S")
 codefilename="code$datetime.zip"
 layerfilename="python$datetime.zip"
@@ -24,13 +29,12 @@ tmpjsonlayerfilename="tmpjsonlayer.json"
 codepath=deployments/code
 dependenciespath=deployments/dependencies
 codefolder=codefolder
-
+lambdaname="$lambdaname-$env"
+layerdescription="$lambdaname-$env"
+layername="$layername-$env"
 # Making code and dependencies folders
 mkdir -p $codepath
 mkdir -p $dependenciespath
-# Getting requirements.txt
-# pipenv install
-# pipenv requirements > requirements.txt
 
 # Zip for code deployment
 find code/ -name '*.py' | cpio -pdm $codefolder
