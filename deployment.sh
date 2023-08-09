@@ -31,7 +31,7 @@ dependenciespath=deployments/dependencies
 codefolder=codefolder
 lambdaname="$lambdaname-$env"
 layerdescription="$lambdaname-$env"
-layername="$layername-$env"
+layername="$lambdaname-$env"
 # Making code and dependencies folders
 mkdir -p $codepath
 mkdir -p $dependenciespath
