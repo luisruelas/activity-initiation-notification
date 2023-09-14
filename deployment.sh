@@ -3,9 +3,6 @@
 #Ask lambda details
 read -r -p "Select an environment (d- for dev; p - for production)" envabv
 
-echo "Define the name of this AWS Lambda (skip \"-environment\" in the name)"
-read lambdaname
-
 echo "Define handler of this AWS Lambda (default: code.lambda_function.lambda_handler)"
 read handler
 
@@ -29,7 +26,7 @@ tmpjsonlayerfilename="tmpjsonlayer.json"
 codepath=deployments/code
 dependenciespath=deployments/dependencies
 codefolder=codefolder
-lambdaname="$lambdaname-$env"
+lambdaname="vivanta-aggregated-parameters-$env"
 layerdescription="$lambdaname-$env"
 layername="$lambdaname-$env"
 # Making code and dependencies folders
@@ -47,8 +44,8 @@ rm -r $codefolder
 
 # Zip for dependencies
 mkdir python
-pipenv lock -r > requirements.txt
-pip3 install requests -r requirements.txt -t python
+pipenv run pip freeze > requirements.txt
+pipenv run pip3 install requests -r requirements.txt -t python
 zip -r $layerfilename python/*
 mv $layerfilename $dependenciespath
 rm -r python
@@ -64,12 +61,12 @@ cp $env_file .env.aws
 sed -i ':a;N;$!ba;s/\n/,/g' .env.aws
 env=$(cat .env.aws)
 # Deploy layer
-echo "Deploying layer..."
-aws lambda publish-layer-version --layer-name $layername --description "$layerdescription" --license-info "MIT" --zip-file fileb://$dependenciespath/$layerfilename --compatible-runtimes python3.6 python3.7 python3.8 --compatible-architectures "arm64" "x86_64" > $tmpjsonlayerfilename
+# echo "Deploying layer..."
+# aws lambda publish-layer-version --layer-name $layername --description "$layerdescription" --license-info "MIT" --zip-file fileb://$dependenciespath/$layerfilename --compatible-runtimes python3.6 python3.7 python3.8 --compatible-architectures "arm64" "x86_64" > $tmpjsonlayerfilename
 
 # Getting layer arn from file
-layerarn="$(grep -oP '(?<="LayerArn": ")[^"]*' $tmpjsonlayerfilename)"
-version="$(grep -oP '(?<="Version": )[^,]*' $tmpjsonlayerfilename)"
+# layerarn="$(grep -oP '(?<="LayerArn": ")[^"]*' $tmpjsonlayerfilename)"
+# version="$(grep -oP '(?<="Version": )[^,]*' $tmpjsonlayerfilename)"
 rm $tmpjsonlayerfilename
 echo $layerarn:$version
 # Deploy lambda
@@ -77,9 +74,9 @@ echo "Deploying lambda..."
 if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]];
 then
   aws lambda create-function --function-name $lambdaname \
-  --zip-file fileb://$codepath/$codefilename --handler $handler --runtime python3.8 \
+  --zip-file fileb://$codepath/$codefilename --handler $handler --runtime python3.10 \
   --role arn:aws:iam::036497184801:role/vivanta-lambda-stg \
-  --layers $layerarn:$version \
+  # --layers $layerarn:$version \
   --vpc-config SubnetIds=subnet-0deef7c7db1b35a70,subnet-08c72e4ac202b6198,SecurityGroupIds=sg-01e5b7c150d395d4d
 
   aws lambda update-function-configuration --function-name $lambdaname \
