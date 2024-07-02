@@ -1,91 +1,75 @@
-#/bin/bash
+# uri='036497184801.dkr.ecr.us-east-1.amazonaws.com/vivanta-whoop-auth'
+repository_name="vivanta-whoop-auth"
+aws_account_id="036497184801"
+region='us-east-1'
+aws_role='arn:aws:iam::036497184801:role/vivanta-lambda-stg'
+create_lambda='N'
 
-#Ask lambda details
-read -r -p "Select an environment (d- for dev; p - for production)" envabv
+env='p'
+environment='production'
 
-echo "Define handler of this AWS Lambda (default: code.lambda_function.lambda_handler)"
-read handler
+echo "Enter the environment (default: $env, development=d, production=p, staging=s)"
+read input
 
-if [[ "$envabv" =~ ^([dD])$ ]];
-then
-  env="dev"
-elif [[ "$envabv" =~ ^([pP])$ ]];
-then
-  env="production"
-else
-  echo "Invalid environment"
-  exit 1
+# input d = development, p = production, s = staging
+if [ $input == 'd' ]; then
+    env='d'
+    environment='development'
+elif [ $input == 's' ]; then
+    env='s'
+    environment='staging'
+fi
+#authenticate no matter what
+aws ecr get-login-password --region $region | docker login --username AWS --password-stdin $aws_account_id.dkr.ecr.us-east-1.amazonaws.com
+
+# if not uri
+if [ -z "$uri" ]; then
+    echo "Enter the repository URI (default: '')"
+    read input
+    uri=$input
+
+    if [ -z "$uri" ]; then
+        echo "Enter the repository name (default: $repository_name)"
+        read input
+        aws ecr create-repository --repository-name $repository_name --region $region --image-scanning-configuration scanOnPush=true --image-tag-mutability MUTABLE
+        exit 0
+    fi
 fi
 
-# Code filename
-response="N" #Never create a new lambda with this script
-datetime=$(date +"%Y-%m-%dT%H_%M_%S")
-codefilename="code$datetime.zip"
-layerfilename="python$datetime.zip"
-tmpjsonlayerfilename="tmpjsonlayer.json"
-codepath=deployments/code
-dependenciespath=deployments/dependencies
-codefolder=codefolder
-lambdaname="vivanta-aggregated-parameters-$env"
-layerdescription="$lambdaname-$env"
-layername="$lambdaname-$env"
-# Making code and dependencies folders
-mkdir -p $codepath
-mkdir -p $dependenciespath
-
-# Zip for code deployment
-find code/ -name '*.py' | cpio -pdm $codefolder
-rm $codefolder/code/cmd_lambda_function.py
-cd $codefolder
-zip -r $codefilename code
-cd ..
-mv $codefolder/$codefilename $codepath
-rm -r $codefolder
-
-# Zip for dependencies
-mkdir python
-pipenv run pip freeze > requirements.txt
-pipenv run pip3 install requests -r requirements.txt -t python
-zip -r $layerfilename python/*
-mv $layerfilename $dependenciespath
-rm -r python
-
-# Setting default handler
-if [ -z "${handler}" ]; then
-  handler="code.lambda_function.lambda_handler"
-fi
-
-# Variables
-env_file=".env.$env"
+echo "Rebuilding image..."
+bash build.sh
+echo "Preparing environment variables..."
+env_file=".env.$environment"
 cp $env_file .env.aws
-sed -i ':a;N;$!ba;s/\n/,/g' .env.aws
+tr '\n' ',' < .env.aws > .env.tmp
+mv .env.tmp .env.aws
 env=$(cat .env.aws)
-# Deploy layer
-# echo "Deploying layer..."
-# aws lambda publish-layer-version --layer-name $layername --description "$layerdescription" --license-info "MIT" --zip-file fileb://$dependenciespath/$layerfilename --compatible-runtimes python3.6 python3.7 python3.8 --compatible-architectures "arm64" "x86_64" > $tmpjsonlayerfilename
 
-# Getting layer arn from file
-# layerarn="$(grep -oP '(?<="LayerArn": ")[^"]*' $tmpjsonlayerfilename)"
-# version="$(grep -oP '(?<="Version": )[^,]*' $tmpjsonlayerfilename)"
-rm $tmpjsonlayerfilename
-echo $layerarn:$version
-# Deploy lambda
-echo "Deploying lambda..."
-if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]];
-then
-  aws lambda create-function --function-name $lambdaname \
-  --zip-file fileb://$codepath/$codefilename --handler $handler --runtime python3.10 \
-  --role arn:aws:iam::036497184801:role/vivanta-lambda-stg \
-  # --layers $layerarn:$version \
-  --vpc-config SubnetIds=subnet-0deef7c7db1b35a70,subnet-08c72e4ac202b6198,SecurityGroupIds=sg-01e5b7c150d395d4d
+echo "Tagging image..."
+docker tag $repository_name $aws_account_id.dkr.ecr.$region.amazonaws.com/$repository_name:latest
 
-  aws lambda update-function-configuration --function-name $lambdaname \
-    --environment "Variables={$env}"
+echo "Pushing image..."
+docker push $aws_account_id.dkr.ecr.$region.amazonaws.com/$repository_name:latest
+
+lambda_name=$repository_name'-'$environment
+if [ $create_lambda == 'Y' ]; then
+  echo "Creating lambda function..."
+  aws lambda create-function \
+    --architecture arm64 \
+    --function-name $lambda_name \
+    --package-type Image \
+    --code ImageUri=$aws_account_id.dkr.ecr.$region.amazonaws.com/$repository_name:latest \
+    --role $aws_role \
+    --environment "Variables={$env}" \
+    --vpc-config SubnetIds=subnet-0deef7c7db1b35a70,subnet-08c72e4ac202b6198,SecurityGroupIds=sg-01e5b7c150d395d4d
 else
-  aws lambda update-function-code --function-name $lambdaname \
-  --zip-file fileb://$codepath/$codefilename
-
-  aws lambda update-function-configuration --function-name $lambdaname \
+  echo "Updating lambda function..."
+  aws lambda update-function-code \
+    --function-name $lambda_name \
+    --image-uri $aws_account_id.dkr.ecr.$region.amazonaws.com/$repository_name:latest
+  sleep 20
+  aws lambda update-function-configuration \
+    --function-name $lambda_name \
     --environment "Variables={$env}" \
     --vpc-config SubnetIds=subnet-0deef7c7db1b35a70,subnet-08c72e4ac202b6198,SecurityGroupIds=sg-01e5b7c150d395d4d
 fi
