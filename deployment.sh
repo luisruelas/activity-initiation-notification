@@ -1,18 +1,26 @@
-# uri='036497184801.dkr.ecr.us-east-1.amazonaws.com/vivanta-whoop-auth'
-repository_name="vivanta-whoop-auth"
+# uri='036497184801.dkr.ecr.us-east-1.amazonaws.com/vivanta-whoop-application-initialization-prod'
+repository_name="vivanta-whoop-application-initialization-prod"
 aws_account_id="036497184801"
 region='us-east-1'
 aws_role='arn:aws:iam::036497184801:role/vivanta-lambda-stg'
-create_lambda='N'
-
 env='p'
 environment='production'
+create_lambda='N'
 
 echo "Enter the environment (default: $env, development=d, production=p, staging=s)"
 read input
 
+echo "Create new lambda function? (Yy/Nn)"
+read input
+if [ $input == 'Y' ] || [ $input == 'y' ]; then
+  create_lambda='Y'
+fi
+
+
 # input d = development, p = production, s = staging
-if [ $input == 'd' ]; then
+if [ ! -z "$input" ]; then
+    env=$input
+elif [ $input == 'd' ]; then
     env='d'
     environment='development'
 elif [ $input == 's' ]; then
@@ -31,6 +39,9 @@ if [ -z "$uri" ]; then
     if [ -z "$uri" ]; then
         echo "Enter the repository name (default: $repository_name)"
         read input
+        if [ ! -z "$input" ]; then
+            repository_name=$input
+        fi
         aws ecr create-repository --repository-name $repository_name --region $region --image-scanning-configuration scanOnPush=true --image-tag-mutability MUTABLE
         exit 0
     fi
