@@ -4,8 +4,8 @@ services:
   app:
     platform: linux/arm64
     build: .
-    image: vivanta-whoop-auth
-    container_name: vivanta-whoop-auth
+    image:
+    container_name:
     volumes:
       - .:/var/task
     env_file:
