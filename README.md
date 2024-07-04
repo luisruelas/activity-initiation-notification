@@ -2,50 +2,22 @@
 ## Warning: Python 3.8 is used in lambdas
 
 ## Setup
-  - Install npm dependencies via Pipenv:
+  - Set up the `image` and `container_name` in `docker-compose.yaml`(ommit -environment names in this step)
+  - Choose an available port and set in `docker-compose.yaml` (default: 9001)
+  - Do `docker-compose up -d` to launch it
+  - If you needd a connection with the database, create a `.env` file at the root and define your connection variables, also you will need to set up the connection between the containers by using `docker network connect {network-name} {db-container-name}`. A default network to bridge this container with any other would be created by the composer file with a name of `{container-name}_lambda_postgres_network`
 
-  ```pipenv install```
 
-  Remember we should install any further dependencies with pipenv:
-
-  ```pipenv install <dependency_name>```
-
-  - Setup pre-commit hooks:
-
-  ```cp pre-commit-sample .git/hooks/pre-commit && chmod ug+x .git/hooks/*```
-
-  Remember to commit inside a `pipenv shell`, otherwise linting and python3 may throw dependency error, if you don't have them in your host system.
-
-Also, you should add the pre-commit script to your local repo:
-
-  ``` cp pre-commit-sample .git/hooks/pre-commit```
-
-This will run unit testing and linting before each commit, ensuring all of your commits comply with our coding standards
-
-Also please add your current path to .env so pipenv will load modules correctly:
-
-  ```pwd > .env```
+Go like this to update: docker-compose down && docker-compose up -d
+(for local dev) Connect DB with network like this docker network connect vivanta-whoop-initialization_lambda_postgres_network vivanta_db
+use requirements.txt to add libraries
 
 ## Testing
-To run tests with Python unittests, do it in a `pipenv shell`:
+You can test this lambda by calling the following endpoint with a POST request
+```http://localhost:{port-in-docker-compose-yaml}/2015-03-31/functions/function/invocations```
 
-```python3 -m unittest tests/*.py```
-
-## Linting
-Don't forget to do this inside a `pipenv shell`. You can run it at the root of the project with:
-
-```pylint code/*.py```
-
-## Building project for lamdas
-Use this one-liner in the root of the proyect, this will create a _build with all the dependencies:
-
-```pipenv run pip install -r <(pipenv lock -r) --target _build/```
-
-Don't forget to add your code in (ideally, this folder name is the same as your AWS Lambda's):
-
-```mkdir -p _build/lambda_name && cp lambda_function.py _build/lambda_name```
+If you want to see the logs, use `tail -f docker logs` to keep them open (or use Docker GUI)
 
 
-If you compress that file into a zip, it is possible to upload it to lambdas:
-
-```cd _build/ && zip -r ../_build.zip ./* && cd ..```
+## Building project for lambdas
+- Run `bash deployment.sh`, and folow the prompts. If you don't have a URI for the container, just leave it blank and set it in `deployment.sh` file after you obtain it in your first run
