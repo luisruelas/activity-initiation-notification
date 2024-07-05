@@ -1,5 +1,5 @@
 # Vivanta Python Lambda Template
-## Warning: Python 3.8 is used in lambdas
+## Warning: Python 3.12 is used in lambdas
 
 ## Setup
   - Set up the `image` and `container_name` in `docker-compose.yaml`(ommit -environment names in this step)
@@ -15,6 +15,8 @@ use requirements.txt to add libraries
 ## Testing
 You can test this lambda by calling the following endpoint with a POST request
 ```http://localhost:{port-in-docker-compose-yaml}/2015-03-31/functions/function/invocations```
+
+After performing chages in your code, you gotta do `docker-compose down && docker-compose up -d` to test them.
 
 If you want to see the logs, use `tail -f docker logs` to keep them open (or use Docker GUI)
 

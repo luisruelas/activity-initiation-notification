@@ -4,7 +4,6 @@ _build.zip
 output_tests/*
 npm_dependencies/*
 deployments
-requirements.txt
 .env.production
 .env.dev
 .env.aws
