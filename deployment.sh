@@ -80,7 +80,10 @@ if [ $create_lambda == 'Y' ]; then
     --code ImageUri=$aws_account_id.dkr.ecr.$region.amazonaws.com/$repository_name:latest \
     --role $aws_role \
     --environment "Variables={$env}" \
-    --vpc-config SubnetIds=subnet-0deef7c7db1b35a70,subnet-08c72e4ac202b6198,SecurityGroupIds=sg-01e5b7c150d395d4d
+    --vpc-config SubnetIds=subnet-0deef7c7db1b35a70,subnet-08c72e4ac202b6198,SecurityGroupIds=sg-01e5b7c150d395d4d \
+    --timeout 60 \
+    --memory-size 512
+
 else
   echo "Updating lambda function..."
   aws lambda update-function-code \
