@@ -16,6 +16,12 @@ if [ $input == 'Y' ] || [ $input == 'y' ]; then
   create_lambda='Y'
 fi
 
+env_file=".env.$environment"
+if [ ! -f $env_file ]; then
+    echo "Environment file not found: $env_file"
+    exit 1
+fi
+
 
 # input d = development, p = production, s = staging
 if [ ! -z "$input" ]; then
@@ -50,7 +56,6 @@ fi
 echo "Rebuilding image..."
 bash build.sh
 echo "Preparing environment variables..."
-env_file=".env.$environment"
 cp $env_file .env.aws
 tr '\n' ',' < .env.aws > .env.tmp
 mv .env.tmp .env.aws
