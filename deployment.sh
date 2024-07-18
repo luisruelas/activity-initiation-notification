@@ -87,5 +87,7 @@ else
   aws lambda update-function-configuration \
     --function-name $lambda_name \
     --environment "Variables={$env}" \
+    --timeout 60 \
+    --memory-size 512 \
     --vpc-config SubnetIds=subnet-0deef7c7db1b35a70,subnet-08c72e4ac202b6198,SecurityGroupIds=sg-01e5b7c150d395d4d
 fi
