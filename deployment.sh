@@ -17,9 +17,12 @@ if [ $input == 'Y' ] || [ $input == 'y' ]; then
 fi
 
 env_file=".env.$environment"
-if [ ! -f $env_file ]; then
-    echo "Environment file not found: $env_file"
-    exit 1
+if [ "$env_input" == 'd' ]; then
+    env='d'
+    environment='dev'
+elif [ "$env_input" == 's' ]; then
+    env='s'
+    environment='stg'
 fi
 
 
