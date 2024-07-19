@@ -8,7 +8,7 @@ environment='production'
 create_lambda='N'
 
 echo "Enter the environment (default: $env, development=d, production=p, staging=s)"
-read input
+read env_input
 
 echo "Create new lambda function? (Yy/Nn)"
 read input
