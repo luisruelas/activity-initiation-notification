@@ -16,7 +16,6 @@ if [ $input == 'Y' ] || [ $input == 'y' ]; then
   create_lambda='Y'
 fi
 
-env_file=".env.$environment"
 if [ "$env_input" == 'd' ]; then
     env='d'
     environment='dev'
@@ -24,18 +23,8 @@ elif [ "$env_input" == 's' ]; then
     env='s'
     environment='stg'
 fi
+env_file=".env.$environment"
 
-
-# input d = development, p = production, s = staging
-if [ ! -z "$input" ]; then
-    env=$input
-elif [ $input == 'd' ]; then
-    env='d'
-    environment='development'
-elif [ $input == 's' ]; then
-    env='s'
-    environment='staging'
-fi
 #authenticate no matter what
 aws ecr get-login-password --region $region | docker login --username AWS --password-stdin $aws_account_id.dkr.ecr.us-east-1.amazonaws.com
 
