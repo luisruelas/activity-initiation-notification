@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  app:
+    platform: linux/arm64
+    build: .
+    image:
+    container_name:
+    volumes:
+      - .:/var/task
+    env_file:
+      - .env
+    ports:
+      - "9001:8080"
+    networks:
+      - lambda_postgres_network
+
+networks:
+  lambda_postgres_network:
+    driver: bridge
