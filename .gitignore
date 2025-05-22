@@ -11,3 +11,4 @@ code.zip
 python.zip
 deployments
 .env
+.env.stg

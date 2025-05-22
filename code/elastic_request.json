@@ -1,0 +1,133 @@
+{
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "terms": {
+                        "vivanta_user_id": []
+                    }
+                },
+                {
+                    "range": {
+                        "date": {
+                            "gte": "2025-05-01T06:00:00.000"
+                        }
+                    }
+                }
+            ],
+            "should": [
+                {
+                    "bool": {
+                        "must": [
+                            {
+                                "match": {
+                                    "brand": "Vivanta"
+                                }
+                            },
+                            {
+                                "match": {
+                                    "payload.type": "step_count"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "must": [
+                            {
+                                "match": {
+                                    "brand": "Fitbit"
+                                }
+                            },
+                            {
+                                "exists": {
+                                    "field": "payload.summary.steps"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "must": [
+                            {
+                                "match": {
+                                    "brand": "Garmin"
+                                }
+                            },
+                            {
+                                "exists": {
+                                    "field": "payload.dailies.steps"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "must": [
+                            {
+                                "match": {
+                                    "brand": "Apple Health"
+                                }
+                            },
+                            {
+                                "match": {
+                                    "payload.data_type": "STEPS"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "must": [
+                            {
+                                "match": {
+                                    "brand": "Google Health"
+                                }
+                            },
+                            {
+                                "match": {
+                                    "payload.data_type": "STEPS"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "must": [
+                            {
+                                "match": {
+                                    "brand": "Whoop"
+                                }
+                            },
+                            {
+                                "exists": {
+                                    "field": "payload.records.score.strain"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ],
+            "minimum_should_match": 1
+        }
+    },
+    "aggs": {
+        "unique_users": {
+            "cardinality": {
+                "field": "vivanta_user_id"
+            }
+        },
+        "id_unique_users": {
+            "terms": {
+                "field": "vivanta_user_id",
+                "size": 1000
+            }
+        }
+    },
+    "size": 0
+}

@@ -2,3 +2,5 @@ pylint
 requests
 psycopg2-binary
 sqlalchemy
+elasticsearch==8.10.0
+boto3
