@@ -4,14 +4,14 @@ services:
   app:
     platform: linux/arm64
     build: .
-    image: docker-activity-initiation-notification
-    container_name: docker-activity-initiation-notification
+    image: docker-activity-reminder-notification
+    container_name: docker-activity-reminder-notification
     volumes:
       - .:/var/task
     env_file:
       - .env
     ports:
-      - "9050:8080"
+      - "9051:8080"
     networks:
       - lambda_postgres_network
 
