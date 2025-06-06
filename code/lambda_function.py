@@ -10,25 +10,22 @@ NOTIFICATIONS = {
             "title": "Just checking on you 🏃",
             "body": "Tap to see how your activity looks today",
             "min": 0,
-            "max": 499
+            "max": 499,
+            "tone": None,
         },
         {
             "title": "Still under 7,000 steps today 😓",
             "body": "You’ve got time — a bit more movement today can get you into the moderate zone.",
             "min": 500,
-            "max": 6999
+            "max": 6999,
+            "tone": "rogerian"
         },
         {
             "title": "You’ve hit 7,000+ steps today 🔥 👟",
             "body": "That’s moderate activity — nice job staying active. Tap to see your day so far.",
             "min": 7000,
-            "max": 9999
-        },
-        {
-            "title": "You’ve passed 10,000 steps today 🔥 👟",
-            "body": "That’s a big win. Your activity today leads the way — tap to review your progress.",
-            "min": 10000,
-            "max": 500000
+            "max": 9999,
+            "tone": "heideggerian"
         }
     ],
     "es": [
@@ -36,25 +33,22 @@ NOTIFICATIONS = {
             "title": "Checando checando  🏃",
             "body": "Toca para ver cómo va tu actividad hoy",
             "min": 0,
-            "max": 499
+            "max": 499,
+            "tone": None,
         },
         {
             "title": "Aún estás por debajo de 7,000 pasos hoy 😓",
             "body": "Registrar tu sueño ahora te ayuda a entender tus hábitos. Toca para registrarlo.",
             "min": 0,
-            "max": 6999
+            "max": 6999,
+            "tone": "rogerian"
         },
         {
             "title": "Hoy pasaste los 7,000 pasos 🔥 👟",
             "body": "Eso es actividad moderada — buen trabajo manteniéndote en movimiento. Toca para ver tu día.",
             "min": 7000,
-            "max": 9999
-        },
-        {
-            "title": "Hoy pasaste los 10,000 pasos 🔥 👟",
-            "body": "¡Gran logro! Tu actividad de hoy marca la diferencia. Toca para ver tu avance.",
-            "min": 10000,
-            "max": 500000
+            "max": 9999,
+            "tone": "heideggerian"
         }
     ]
 }
@@ -93,6 +87,7 @@ def lambda_handler(event, context): # pylint: disable=unused-argument
         )
         payload = json.loads(response['Payload'].read())
         body = payload.get('body')
+        notification = None
         if len(body) == 0:
             print(f'No steps in the last {DAYS_BEFORE_CHECK} days for user {identifier.user_id}')
             continue
@@ -107,6 +102,9 @@ def lambda_handler(event, context): # pylint: disable=unused-argument
                 if steps_today >= evaluating_notification["min"] and steps_today <= evaluating_notification["max"]:
                     notification = evaluating_notification
                     break
+        if notification is None:
+            print(f'No notification found for user {identifier.user_id}, steps: {steps_today}')
+            continue
         language = identifier.language
         notification_title = notification["title"]
         notification_body = notification["body"]
@@ -121,7 +119,7 @@ def lambda_handler(event, context): # pylint: disable=unused-argument
             "deviceTokens": [push_id],
             "notificationId": os.environ.get('NOTIFICATION_ID'),
             "language": language,
-            'tone': 'rogerian'
+            'tone': notification["tone"]
         }
         if os.environ.get('ENV') == 'local':
             print(f'response for user {identifier.user_id}: ', body)

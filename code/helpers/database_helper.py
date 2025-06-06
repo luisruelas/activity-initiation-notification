@@ -80,7 +80,7 @@ class DatabaseHelper:
                 Credential, ApplicationIdentifier.user_id == Credential.user_id
             ).filter(
                 ApplicationIdentifier.created_at < stats_of_two_days_ago,
-                ApplicationIdentifier.updated_at >= stats_min_last_day_active,
+                # ApplicationIdentifier.updated_at >= stats_min_last_day_active,
                 func.coalesce(ApplicationIdentifier.timezone_offset, -6) == offset_to_send
 
             )
